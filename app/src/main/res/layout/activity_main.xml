@@ -18,4 +18,11 @@
         android:layout_height="wrap_content"
         android:text="Add ToDo" />
 
+    <TextView
+        android:id="@+id/todoListText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="No todos yet" />
+
 </LinearLayout>
