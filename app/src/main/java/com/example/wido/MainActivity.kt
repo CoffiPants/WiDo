@@ -2,30 +2,36 @@ package com.example.wido
 
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity() {
 
     private val todos = mutableListOf<TodoItem>()
+    private lateinit var adapter: TodoAdapter
     private var counter = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val recyclerView = findViewById<RecyclerView>(R.id.todoRecyclerView)
         val addButton = findViewById<Button>(R.id.addTodoButton)
-        val todoText = findViewById<TextView>(R.id.todoListText)
+
+        adapter = TodoAdapter(todos)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
         addButton.setOnClickListener {
-            val todo = TodoItem(
-                id = counter.toLong(),
-                title = "Todo $counter"
+            todos.add(
+                TodoItem(
+                    id = counter.toLong(),
+                    title = "Todo $counter"
+                )
             )
             counter++
-            todos.add(todo)
-
-            todoText.text = todos.joinToString("\n") { it.title }
+            adapter.notifyItemInserted(todos.size - 1)
         }
     }
 }
