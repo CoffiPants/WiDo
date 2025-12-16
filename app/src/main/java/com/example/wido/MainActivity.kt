@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         val addButton = findViewById<Button>(R.id.addTodoButton)
 
         adapter = TodoAdapter(todos)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
