@@ -1,57 +1,41 @@
 package com.example.wido
 
-import android.graphics.Paint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.wido.databinding.ItemTodoBinding
 
 class TodoAdapter(
-    private val todos: MutableList<TodoItem>
-) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
+    private val onToggle: (TodoItem) -> Unit,
+    private val onEdit: (TodoItem) -> Unit,
+    private val onDelete: (TodoItem) -> Unit
+) : ListAdapter<TodoItem, TodoAdapter.VH>(Diff) {
 
-    inner class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val text: TextView = itemView.findViewById(R.id.todoItemText)
+    object Diff : DiffUtil.ItemCallback<TodoItem>() {
+        override fun areItemsTheSame(oldItem: TodoItem, newItem: TodoItem) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: TodoItem, newItem: TodoItem) = oldItem == newItem
+    }
 
-        init {
-            // klik → toggle isDone
-            itemView.setOnClickListener {
-                val todo = todos[bindingAdapterPosition]
-                todos[bindingAdapterPosition] =
-                    todo.copy(isDone = !todo.isDone)
-                notifyItemChanged(bindingAdapterPosition)
-            }
+    inner class VH(val b: ItemTodoBinding) : RecyclerView.ViewHolder(b.root)
 
-            // długi klik → usuń
-            itemView.setOnLongClickListener {
-                todos.removeAt(bindingAdapterPosition)
-                notifyItemRemoved(bindingAdapterPosition)
-                true
-            }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val b = ItemTodoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return VH(b)
+    }
+
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        val item = getItem(position)
+        holder.b.todoTitle.text = item.title
+        holder.b.todoStatus.text = if (item.isDone) "✓" else "○"
+
+        holder.b.todoStatus.setOnClickListener { onToggle(item) }
+        holder.b.todoTitle.setOnClickListener { onEdit(item) }
+
+        holder.b.root.setOnLongClickListener {
+            onDelete(item)
+            true
         }
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_todo, parent, false)
-        return TodoViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
-        val todo = todos[position]
-        holder.text.text = todo.title
-
-        if (todo.isDone) {
-            holder.text.paintFlags =
-                holder.text.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-            holder.text.alpha = 0.5f
-        } else {
-            holder.text.paintFlags =
-                holder.text.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-            holder.text.alpha = 1f
-        }
-    }
-
-    override fun getItemCount(): Int = todos.size
 }

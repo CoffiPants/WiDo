@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:padding="12dp"
+    android:padding="6dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/todoStatus"
-        android:layout_width="32dp"
+        android:id="@+id/wItemStatus"
+        android:layout_width="24dp"
         android:layout_height="wrap_content"
         android:text="○"
-        android:textSize="20sp" />
+        android:textSize="18sp"/>
 
     <TextView
-        android:id="@+id/todoTitle"
+        android:id="@+id/wItemTitle"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Todo"
-        android:textSize="16sp" />
+        android:layout_height="wrap_content"
+        android:text="Todo"/>
 </LinearLayout>
