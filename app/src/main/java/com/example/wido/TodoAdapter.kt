@@ -28,14 +28,23 @@ class TodoAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
         holder.b.todoTitle.text = item.title
-        holder.b.todoStatus.text = if (item.isDone) "✓" else "○"
 
-        holder.b.todoStatus.setOnClickListener { onToggle(item) }
+        // Remove listener to avoid triggering it while setting state
+        holder.b.todoStatus.setOnCheckedChangeListener(null)
+        holder.b.todoStatus.isChecked = item.isDone
+
+        // Use OnClickListener for CheckBox to handle user interaction primarily
+        holder.b.todoStatus.setOnClickListener {
+            onToggle(item)
+        }
+
         holder.b.todoTitle.setOnClickListener { onEdit(item) }
 
-        holder.b.root.setOnLongClickListener {
+        holder.b.deleteButton.setOnClickListener {
             onDelete(item)
-            true
         }
+
+        // Long click logic removed as we now have a dedicated delete button
+        holder.b.root.setOnLongClickListener(null)
     }
 }
