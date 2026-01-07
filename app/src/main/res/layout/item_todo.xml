@@ -2,15 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:padding="12dp"
+    android:gravity="center_vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
+    <CheckBox
         android:id="@+id/todoStatus"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:text="○"
-        android:textSize="20sp" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/todoTitle"
@@ -18,5 +17,16 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Todo"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"/>
+
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Delete"
+        android:padding="8dp"/>
 </LinearLayout>

@@ -3,8 +3,11 @@ package com.example.wido
 import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.wido.databinding.ActivityMainBinding
 import kotlinx.coroutines.flow.collectLatest
@@ -13,8 +16,7 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var b: ActivityMainBinding
-    private lateinit var db: AppDatabase
-    private lateinit var dao: TodoDao
+    private val viewModel: MainViewModel by viewModels()
     private lateinit var adapter: TodoAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,24 +24,15 @@ class MainActivity : AppCompatActivity() {
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        db = AppDatabase.get(this)
-        dao = db.todoDao()
-
         adapter = TodoAdapter(
             onToggle = { item ->
-                lifecycleScope.launch {
-                    dao.setDone(item.id, !item.isDone)
-                    WidgetUpdater.updateAll(this@MainActivity)
-                }
+                viewModel.toggleTodo(item)
             },
             onEdit = { item ->
                 showEditDialog(item)
             },
             onDelete = { item ->
-                lifecycleScope.launch {
-                    dao.delete(item)
-                    WidgetUpdater.updateAll(this@MainActivity)
-                }
+                viewModel.deleteTodo(item)
             }
         )
 
@@ -49,8 +42,10 @@ class MainActivity : AppCompatActivity() {
         b.addTodoButton.setOnClickListener { showAddDialog() }
 
         lifecycleScope.launch {
-            dao.observeAll().collectLatest { list ->
-                adapter.submitList(list)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.todos.collectLatest { list ->
+                    adapter.submitList(list)
+                }
             }
         }
     }
@@ -65,10 +60,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Add") { _, _ ->
                 val title = input.text.toString().trim()
                 if (title.isNotEmpty()) {
-                    lifecycleScope.launch {
-                        dao.insert(TodoItem(title = title))
-                        WidgetUpdater.updateAll(this@MainActivity)
-                    }
+                    viewModel.addTodo(title)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -85,10 +77,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Save") { _, _ ->
                 val title = input.text.toString().trim()
                 if (title.isNotEmpty()) {
-                    lifecycleScope.launch {
-                        dao.updateTitle(item.id, title)
-                        WidgetUpdater.updateAll(this@MainActivity)
-                    }
+                    viewModel.updateTitle(item, title)
                 }
             }
             .setNegativeButton("Cancel", null)
