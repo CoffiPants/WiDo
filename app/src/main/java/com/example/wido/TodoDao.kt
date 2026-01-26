@@ -6,11 +6,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao {
 
-    @Query("SELECT * FROM todos ORDER BY isDone ASC, updatedAt DESC")
+    @Query("SELECT * FROM todos ORDER BY isDone ASC, priority DESC, updatedAt DESC")
     fun observeAll(): Flow<List<TodoItem>>
 
-    @Query("SELECT * FROM todos ORDER BY isDone ASC, updatedAt DESC")
+    @Query("SELECT * FROM todos ORDER BY isDone ASC, priority DESC, updatedAt DESC")
     suspend fun getAll(): List<TodoItem>
+
+    @Query("SELECT * FROM todos WHERE title LIKE '%' || :query || '%' OR tag LIKE '%' || :query || '%' ORDER BY isDone ASC, priority DESC, updatedAt DESC")
+    fun search(query: String): Flow<List<TodoItem>>
 
     @Insert
     suspend fun insert(item: TodoItem): Long

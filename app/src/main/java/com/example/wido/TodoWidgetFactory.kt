@@ -14,7 +14,6 @@ class TodoWidgetFactory(private val context: Context) : RemoteViewsService.Remot
     override fun onDestroy() {}
 
     override fun onDataSetChanged() {
-        // wywoływane przy notifyAppWidgetViewDataChanged
         items = runCatching { kotlinx.coroutines.runBlocking { dao.getAll() } }.getOrDefault(emptyList())
     }
 
@@ -23,9 +22,30 @@ class TodoWidgetFactory(private val context: Context) : RemoteViewsService.Remot
         val item = items[position]
         val rv = RemoteViews(context.packageName, R.layout.widget_item_todo)
         rv.setTextViewText(R.id.wItemTitle, item.title)
-        rv.setTextViewText(R.id.wItemStatus, if (item.isDone) "✓" else "○")
 
-        // klik w wiersz (albo status) → toggle
+        val prefs = context.getSharedPreferences("widget_prefs", Context.MODE_PRIVATE)
+        val style = prefs.getString("widget_style", "classic")
+
+        val statusText = if (item.isDone) {
+            when (style) {
+                "emoji" -> "✅"
+                "check" -> "[x]"
+                "crazy" -> "🔥"
+                "stars" -> "⭐"
+                else -> "●"
+            }
+        } else {
+            when (style) {
+                "emoji" -> "📝"
+                "check" -> "[ ]"
+                "crazy" -> "🧊"
+                "stars" -> "☆"
+                else -> "○"
+            }
+        }
+        
+        rv.setTextViewText(R.id.wItemStatus, statusText)
+
         val fillIn = Intent().apply {
             putExtra(TodoWidget.EXTRA_TODO_ID, item.id)
         }

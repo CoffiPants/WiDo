@@ -3,20 +3,59 @@
     android:orientation="horizontal"
     android:padding="12dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/todoStatus"
         android:layout_width="32dp"
         android:layout_height="wrap_content"
         android:text="○"
-        android:textSize="20sp" />
+        android:textSize="24sp" />
 
-    <TextView
-        android:id="@+id/todoTitle"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Todo"
-        android:textSize="16sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/todoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Todo"
+            android:textColor="@color/onSurface"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/extraInfoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/todoTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/primary"
+                android:textStyle="bold"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/todoDueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:alpha="0.6" />
+        </LinearLayout>
+    </LinearLayout>
+    
+    <View
+        android:id="@+id/priorityIndicator"
+        android:layout_width="4dp"
+        android:layout_height="24dp"
+        android:background="#FF0000"
+        android:visibility="gone" />
 </LinearLayout>
